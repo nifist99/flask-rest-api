@@ -7,9 +7,9 @@ with con_mysql:
     with con_mysql.cursor() as cursor:
         # Create a new table
         try:
-            employee='DROP TABLE employee'
-            cursor.execute(employee)
-            print("drop table successfully employee")
+            oauth_access_tokens='DROP TABLE oauth_access_tokens'
+            cursor.execute(oauth_access_tokens)
+            print("drop table successfully oauth_access_tokens")
         except pymysql.Error as err:
             print(err)
             pass
