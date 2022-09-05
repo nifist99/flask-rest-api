@@ -5,22 +5,59 @@ con_mysql = con.connection()
 
 class users:
     def index():
-        with con_mysql:
-            with con_mysql.cursor() as cursor:
                 try:
-                    users='CREATE TABLE users(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                    users+='name VARCHAR(20),'
-                    users+='email VARCHAR(250) NOT NULL,'
-                    users+='password VARCHAR(1000) NOT NULL,'
-                    users+='status VARCHAR(250) NOT NULL,'
-                    users+='email_verified_at DATE,'
-                    users+='remember_token VARCHAR(1000),'
-                    users+='created_at DATETIME,'
-                    users+='updated_at DATETIME'
-                    users+=')'
+                    conn = con.connection()
+                    cursor =conn.cursor()
+                    
+                    users='SELECT * FROM users'
 
                     cursor.execute(users)
 
+                    row = cursor.fetchall()
+
+                    conn.close()
+
+                    data = dict()
+                    data['status']  =True
+                    data['message'] ='success get data'
+                    data['code']    = 200
+                    data['data']    = row
+                    return data
+                except pymysql.Error as err:
+                    conn.close()
+                    data = dict()
+                    data['status']  =False
+                    data['message'] = 'failed get data'
+                    data['code']    = 401
+                    data['data']    = []
+                    return data
+
+    def detail(id):
+                try:
+                    conn = con.connection()
+                    cursor =conn.cursor()
+                    users='SELECT * FROM users WHERE id=%s',id
+
+                    cursor.execute(users)
+                    
+                    data = cursor.fetchone()
+
+                    return data
+                except pymysql.Error as err:
+                    error = err
+                    pass
+                finally:
+                    con_mysql.close()
+                    return error
+
+    def store(name, email, password):
+                try:
+                    conn = con.connection()
+                    cursor =conn.cursor()
+                    users="INSERT INTO users (name, email, password) VALUES (%s, %s, %s)"
+                    value=(name,email,password)
+
+                    cursor.execute(users,value)
                     con_mysql.commit()
 
                     return True
@@ -28,68 +65,13 @@ class users:
                     con_mysql.rollback()
                     return False
 
-    def detail():
-        with con_mysql:
-            with con_mysql.cursor() as cursor:
+    def update(id,name,email):
                 try:
-                    users='CREATE TABLE users(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                    users+='name VARCHAR(20),'
-                    users+='email VARCHAR(250) NOT NULL,'
-                    users+='password VARCHAR(1000) NOT NULL,'
-                    users+='status VARCHAR(250) NOT NULL,'
-                    users+='email_verified_at DATE,'
-                    users+='remember_token VARCHAR(1000),'
-                    users+='created_at DATETIME,'
-                    users+='updated_at DATETIME'
-                    users+=')'
-
-                    cursor.execute(users)
-                    con_mysql.commit()
-
-                    return True
-                except pymysql.Error as err:
-                    con_mysql.rollback()
-                    return False
-
-    def store():
-        with con_mysql:
-            with con_mysql.cursor() as cursor:
-                try:
-                    users='CREATE TABLE users(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                    users+='name VARCHAR(20),'
-                    users+='email VARCHAR(250) NOT NULL,'
-                    users+='password VARCHAR(1000) NOT NULL,'
-                    users+='status VARCHAR(250) NOT NULL,'
-                    users+='email_verified_at DATE,'
-                    users+='remember_token VARCHAR(1000),'
-                    users+='created_at DATETIME,'
-                    users+='updated_at DATETIME'
-                    users+=')'
-
-                    cursor.execute(users)
-                    con_mysql.commit()
-
-                    return True
-                except pymysql.Error as err:
-                    con_mysql.rollback()
-                    return False
-
-    def update():
-        with con_mysql:
-            with con_mysql.cursor() as cursor:
-                try:
-                    users='CREATE TABLE users(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                    users+='name VARCHAR(20),'
-                    users+='email VARCHAR(250) NOT NULL,'
-                    users+='password VARCHAR(1000) NOT NULL,'
-                    users+='status VARCHAR(250) NOT NULL,'
-                    users+='email_verified_at DATE,'
-                    users+='remember_token VARCHAR(1000),'
-                    users+='created_at DATETIME,'
-                    users+='updated_at DATETIME'
-                    users+=')'
-
-                    cursor.execute(users)
+                    conn = con.connection()
+                    cursor =conn.cursor()
+                    users='UPDATE users SET name = %s,email = %s WHERE id = %s'
+                    value =(name,email,id)
+                    cursor.execute(users,value)
                     con_mysql.commit()
 
                     return True
@@ -97,22 +79,12 @@ class users:
                     con_mysql.rollback()
                     return False
     
-    def delete():
-        with con_mysql:
-            with con_mysql.cursor() as cursor:
+    def delete(id):
                 try:
-                    users='CREATE TABLE users(id int NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-                    users+='name VARCHAR(20),'
-                    users+='email VARCHAR(250) NOT NULL,'
-                    users+='password VARCHAR(1000) NOT NULL,'
-                    users+='status VARCHAR(250) NOT NULL,'
-                    users+='email_verified_at DATE,'
-                    users+='remember_token VARCHAR(1000),'
-                    users+='created_at DATETIME,'
-                    users+='updated_at DATETIME'
-                    users+=')'
-
-                    cursor.execute(users)
+                    conn = con.connection()
+                    cursor =conn.cursor()
+                    users='DELETE FROM users WHERE id = %s'
+                    cursor.execute(users,id)
                     con_mysql.commit()
 
                     return True
